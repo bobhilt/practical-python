@@ -1,6 +1,6 @@
 # mortgage.py
 #
-# Exercise 1.7
+# Exercise 1.8
 # mortgage.py
 # Suppose Dave pays an extra $1000/month for the first 12 months of the mortgage?
 
