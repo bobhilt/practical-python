@@ -1,13 +1,13 @@
 # fileparse.py
 #
-# Exercise 3.3
+# Exercise 3.5
 #
 ''' parse a csv file into a list of records
     (assumes header row)
 '''
 
 import csv
-def parse_csv(filename, select=None):
+def parse_csv(filename, select=None, recast=None):
     with open(filename) as f:
         rows = csv.reader(f)
 
@@ -26,6 +26,9 @@ def parse_csv(filename, select=None):
             if select:
                 row = [row[index] for index in indices]
 
+            if recast:
+                row = [f(value) for f,value in zip(recast, row)]
+                
             record = dict(zip(headers,row))
             records.append(record)
     
