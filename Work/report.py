@@ -28,9 +28,17 @@ def make_report(portfolio, prices):
         detail += f"{r['name']:>{col_width}} {r['shares']:>{col_width}} {r['price']:>{col_width}.2f} {change:>{col_width}.2f}\n"
     return header1 + separator + detail
 
-portfolio = parse_csv('Data/portfolio.csv',has_headers=True,recast=[str,int,float])
-prices = dict(parse_csv('Data/prices.csv',has_headers=False, recast=[str,float]))
+def main(argv):
+    if len(argv) != 3:
+        raise SystemExit(f'Usage: {sys.argv[0]} ' 'portfile pricefile')
 
-report = make_report(portfolio, prices)
+    portfile = argv[1]
+    pricefile = argv[2]
+    portfolio = parse_csv(portfile,has_headers=True,recast=[str,int,float])
+    prices = dict(parse_csv(pricefile,has_headers=False, recast=[str,float]))
+    report = make_report(portfolio, prices)
+    print(report)
 
-print(report)
+if __name__ == '__main__':
+    import sys
+    main(sys.argv)
