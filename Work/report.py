@@ -11,41 +11,26 @@
 #       MSFT         50      20.89     -44.21
 #        IBM        100     106.28      35.84
 
-from csv import reader
-
-def read_portfolio(file_name):
-    with open(file_name, 'r') as f:
-        portfolio_reader = reader(f)
-        portfolio =  [x for x in portfolio_reader]
-    return portfolio
-
-def read_prices(file_name):
-    with open(file_name, 'r') as f:
-        prices_reader = reader(f)
-        prices = {row[0]: row[1] for row in prices_reader if len(row)==2}
-        return prices
+from fileparse import parse_csv
 
 def make_report(portfolio, prices):
-    # header
-    # header1 = "        Name       Shares       Price      Change\n"
-    #header2 = "  ----------   ----------  ----------  ----------\n"
-    headers = headers = ('Name', 'Shares', 'Price', 'Change','----------')
-    header1 = f"{headers[0]:>10} {headers[1]:>10} {headers[2]:>10} {headers[3]:>10}\n"
-    header2 = f"{headers[4]:>10} {headers[4]:>10} {headers[4]:>10} {headers[4]:>10}\n"
+    col_width=10
+    headers = list(portfolio[0].keys())
+    headers.append('Change')
+    border = '-' * col_width
+    header1 = f"{headers[0]:>{col_width}} {headers[1]:>{col_width}} {headers[2]:>{col_width}} {headers[3]:>{col_width}}\n"
+    separator = f"{border:>{col_width}} {border:>{col_width}} {border:>{col_width}} {border:>{col_width}}\n"
     p = portfolio
     detail = ""
     for r in p[1:]:
-        name = r[0]
-        shares = int(r[1])
-        price = float(prices[r[0]])
-        price_str = f'${price:0.2f}'    # stringify with $ so it can be right-aligned in formatted string below.
-        change = float(r[2]) - float(prices[r[0]])
-        detail += f"{name:>10} {shares:>10} {price_str:>10} {change:>10.2f}\n"
+        price = prices[r['name']]
+        change = r['price'] - price
+        detail += f"{r['name']:>{col_width}} {r['shares']:>{col_width}} {r['price']:>{col_width}.2f} {change:>{col_width}.2f}\n"
+    return header1 + separator + detail
 
-    return header1 + header2 + detail
+portfolio = parse_csv('Data/portfolio.csv',has_headers=True,recast=[str,int,float])
+prices = dict(parse_csv('Data/prices.csv',has_headers=False, recast=[str,float]))
 
-portfolio = read_portfolio('Data/portfolio.csv')
-prices = read_prices('Data/prices.csv')
 report = make_report(portfolio, prices)
 
 print(report)
